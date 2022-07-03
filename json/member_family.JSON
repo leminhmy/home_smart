@@ -1,0 +1,116 @@
+{
+    "members": [
+        {
+            "id": "1",
+            "name": "Minh A",
+            "image": "assets/image/1.png"
+        },
+        {
+            "id": "2",
+            "name": "Minh B",
+            "image": "assets/image/2.png"
+        },
+        {
+            "id": "3",
+            "name": "Minh D",
+            "image": "assets/image/3.png"
+        },
+        {
+            "id": "4",
+            "name": "Minh C",
+            "image": "assets/image/download.png"
+        }
+    ],
+    "home_room": [
+        {
+            "id": "1",
+            "name": "Phòng Khách",
+            "image": "assets/image/download.png",
+            "device": [
+                {
+                    "id": "1",
+                    "name": "Máy Lạnh",
+                    "image": "assets/image/download.png",
+                    "temp": "30",
+                    "status": "1"
+                },
+                {
+                    "id": "2",
+                    "name": "Đèn trần",
+                    "image": "assets/image/download.png",
+                    "status": "1"
+                },
+                {
+                    "id": "3",
+                    "name": "Tivi",
+                    "image": "assets/image/download.png",
+                    "status": "0"
+                },
+                {
+                    "id": "3",
+                    "name": "Camera",
+                    "image": "assets/image/download.png",
+                    "status": "1"
+                }
+            ]
+        },
+        {
+            "id": "2",
+            "name": "Phòng Ngủ",
+            "image": "assets/image/download.png",
+            "device": [
+                {
+                    "id": "1",
+                    "name": "Máy Lạnh",
+                    "image": "assets/image/download.png",
+                    "temp": "40",
+                    "status": "0"
+                },
+                {
+                    "id": "2",
+                    "name": "Đèn trần",
+                    "image": "assets/image/download.png",
+                    "status": "0"
+                },
+                {
+                    "id": "3",
+                    "name": "Tivi",
+                    "image": "assets/image/download.png",
+                    "status": "0"
+                }
+            ]
+        },
+        {
+            "id": "3",
+            "name": "Phòng Bếp",
+            "image": "assets/image/download.png",
+            "device": [
+                {
+                    "id": "1",
+                    "name": "Máy Lạnh",
+                    "image": "assets/image/download.png",
+                    "temp": "40",
+                    "status": "1"
+                },
+                {
+                    "id": "2",
+                    "name": "Quạt Thông Gió",
+                    "image": "assets/image/download.png",
+                    "status": "1"
+                },
+                {
+                    "id": "3",
+                    "name": "Đèn trần",
+                    "image": "assets/image/download.png",
+                    "status": "0"
+                },
+                {
+                    "id": "4",
+                    "name": "Tivi",
+                    "image": "assets/image/download.png",
+                    "status": "0"
+                }
+            ]
+        }
+    ]
+}
