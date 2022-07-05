@@ -15,12 +15,17 @@ import '../widget/animated_toggle.dart';
 import '../widget/big_text.dart';
 import '../widget/swich_and_text.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
+
+  @override
+  Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => HomeBloc(
         RepositoryProvider.of<BoredService>(context),
@@ -33,11 +38,11 @@ class HomeScreen extends StatelessWidget {
         builder: (context, state) {
           return Scaffold(
             backgroundColor: Colors.white,
-            extendBody: true,
             body: SafeArea(
               child: SingleChildScrollView(
                 child: Column(
                   children: [
+
                     buildAppbar(state),
                     //test
                     buildBody(context,state),
@@ -174,178 +179,180 @@ class HomeScreen extends StatelessWidget {
    }
 
   buildBody(BuildContext context, HomeState state) {
+
     return Column(
+      children: [
+        GestureDetector(
+          onTap: () async{
+        Navigator.push(context, MaterialPageRoute(builder: (_) => BlocProvider.value(
+             value: BlocProvider.of<HomeBloc>(context),
+             child: const CurrentLocationScreen(),
+           )));
+
+          },
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.2,
+            margin: EdgeInsets.all(20),
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Colors.deepPurpleAccent,
+                      Colors.pink,
+                    ]
+                )
+            ),
+            child: Stack(
               children: [
+                if(state is HomeLoadingState)
+                  const Center(child: CircularProgressIndicator()),
 
-                Column(
+                if(state is HomeLoadedState)
+                  Column(
                   children: [
-                    GestureDetector(
-                      onTap: () async{
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => BlocProvider.value(
-                         value: BlocProvider.of<HomeBloc>(context),
-                         child: const CurrentLocationScreen(),
-                       )));
-
-                      },
-                      child: Container(
-                        height: MediaQuery.of(context).size.height * 0.2,
-                        margin: EdgeInsets.all(20),
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            gradient: LinearGradient(
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                                colors: [
-                                  Colors.deepPurpleAccent,
-                                  Colors.pink,
-                                ]
-                            )
-                        ),
-                        child: Stack(
+                    Expanded(child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if(state is HomeLoadingState)
-                              const Center(child: CircularProgressIndicator()),
+                            BigText(text: "My Location",textColor: Colors.white),
+                            SmallText(text: state.myLocation!),
+                          ],
+                        ),
+                        BigText(text: "${kelvinToCelsius(state.currentModel!.temp!).toStringAsFixed(0)}°",textColor: Colors.white,fontSize: 50,),
+                      ],
+                    )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.network(state.currentModel!.weather![0].icon!,height: MediaQuery.of(context).size.height * 0.04),
+                        SizedBox(width: 5,),
+                        SmallText(text: state.currentModel!.weather![0].description!,),
+                        Spacer(),
+                        SmallText(text: "Độ ẩm ${state.currentModel!.humidity!}%",),
 
-                            if(state is HomeLoadedState)
-                              Column(
-                              children: [
-                                Expanded(child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      ],
+                    )
+                  ],
+                ),
+
+
+              ],
+            ),
+          ),
+        ),
+        AnimatedToggle(
+          values: ['Room', 'Devices'],
+          onToggleCallback: (value) {
+
+          },
+          buttonColor: const Color(0xFF0A3157),
+          backgroundColor: const Color(0xFFB5C1CC),
+          textColor: const Color(0xFFFFFFFF),
+          sizeHeightContext: MediaQuery.of(context).size.height * 0.7,
+        ),
+        Column(
+          children: [
+            if(state is HomeLoadingState)
+              CircularProgressIndicator(),
+            if(state is HomeLoadedState)
+              GridView.builder(
+                  padding: EdgeInsets.all(20),
+                  itemCount: state.listHomeRoom!.length,
+                  primary: false,
+                  shrinkWrap: true,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisSpacing: 20,
+                    mainAxisSpacing: 20,
+                    mainAxisExtent: 280,
+                    crossAxisCount: 2,
+                  ), itemBuilder: (context, index){
+                return GestureDetector(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => DetailScreen()));
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.grey.shade400,
+                              offset: Offset(0,0),
+                              spreadRadius: 1,
+                              blurRadius: 20
+                          )
+                        ]
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                        ),
+                        child: Column(
+                          children: [
+                            Expanded(
+                                flex: 1,
+                                child: Stack(
                                   children: [
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        BigText(text: "My Location",textColor: Colors.white),
-                                        SmallText(text: state.myLocation!),
-                                      ],
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              image: AssetImage(state.listHomeRoom![index].image!),
+                                              fit: BoxFit.cover
+                                          )
+                                      ),
                                     ),
-                                    BigText(text: "${kelvinToCelsius(state.currentModel!.temp!).toStringAsFixed(0)}°",textColor: Colors.white,fontSize: 50,),
+                                    Positioned(
+                                      top: 0,
+                                      right: 0,
+                                      child: Container(
+                                        margin: EdgeInsets.all(10),
+                                        padding: EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(20),
+                                          color: Colors.grey.shade400.withOpacity(0.3),
+                                        ),
+                                        child: Icon(Icons.more_vert_outlined,color: Colors.white,),
+                                      ),
+                                    )
                                   ],
                                 )),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                            Expanded(
+                              flex: 1,
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Image.network(state.currentModel!.weather![0].icon!,height: MediaQuery.of(context).size.height * 0.04),
-                                    SizedBox(width: 5,),
-                                    SmallText(text: state.currentModel!.weather![0].description!,),
+                                    BigText(text: state.listHomeRoom![index].name!,textColor: Colors.grey,fontSize: 18,),
+                                    SmallText(text: "Device ${state.listHomeRoom![index].device!.length}"),
                                     Spacer(),
-                                    SmallText(text: "Độ ẩm ${state.currentModel!.humidity!}%",),
+                                    SwichAndText(isCheck: state.listHomeRoom![index].device![0].status == "1"?true:false),
 
                                   ],
-                                )
-                              ],
+                                ),
+                              ),
                             ),
-
-
                           ],
                         ),
                       ),
                     ),
-                    AnimatedToggle(
-                      values: ['Room', 'Devices'],
-                      onToggleCallback: (value) {
-                      },
-                      buttonColor: const Color(0xFF0A3157),
-                      backgroundColor: const Color(0xFFB5C1CC),
-                      textColor: const Color(0xFFFFFFFF),
-                      sizeHeightContext: MediaQuery.of(context).size.height * 0.7,
-                    ),
-                    if(state is HomeLoadingState)
-                      CircularProgressIndicator(),
-                    if(state is HomeLoadedState)
-                      GridView.builder(
-                        padding: EdgeInsets.all(20),
-                        itemCount: state.listHomeRoom!.length,
-                        primary: false,
-                        shrinkWrap: true,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisSpacing: 20,
-                          mainAxisSpacing: 20,
-                          mainAxisExtent: 280,
-                          crossAxisCount: 2,
-                        ), itemBuilder: (context, index){
-                      return GestureDetector(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => DetailScreen()));
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.grey.shade400,
-                                    offset: Offset(0,0),
-                                    spreadRadius: 1,
-                                    blurRadius: 20
-                                )
-                              ]
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                              ),
-                              child: Column(
-                                children: [
-                                  Expanded(
-                                      flex: 1,
-                                      child: Stack(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                    image: AssetImage(state.listHomeRoom![index].image!),
-                                                    fit: BoxFit.cover
-                                                )
-                                            ),
-                                          ),
-                                          Positioned(
-                                            top: 0,
-                                            right: 0,
-                                            child: Container(
-                                              margin: EdgeInsets.all(10),
-                                              padding: EdgeInsets.all(5),
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(20),
-                                                color: Colors.grey.shade400.withOpacity(0.3),
-                                              ),
-                                              child: Icon(Icons.more_vert_outlined,color: Colors.white,),
-                                            ),
-                                          )
-                                        ],
-                                      )),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          BigText(text: state.listHomeRoom![index].name!,textColor: Colors.grey,fontSize: 18,),
-                                          SmallText(text: "Device ${state.listHomeRoom![index].device!.length}"),
-                                          Spacer(),
-                                          SwichAndText(isCheck: state.listHomeRoom![index].device![0].status == "1"?true:false),
+                  ),
+                );
+              }),
+          ],
+        ),
 
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
 
-                  ],
-                ),
-                SizedBox(height: 20,),
-              ],
-            );
+
+      ],
+    );
   }
 
    buildAppbar(HomeState state) {
